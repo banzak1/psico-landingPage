@@ -1,0 +1,145 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+  /* Warm Earthy Color Palette */
+  --color-primary: #D47A6B; /* Terracotta */
+  --color-primary-hover: #B86558;
+  --color-secondary: #EAB9AA; /* Soft Terracotta/Pinkish */
+  --color-accent: #C9A690; /* Warm Sand */
+  --color-background: #FDFBF7; /* Warm Off-White/Beige */
+  --color-surface: #FFFFFF; /* White */
+  --color-text-primary: #4A3B39; /* Dark Earthy Brown */
+  --color-text-secondary: #8C7A77; /* Muted Brown */
+  --color-border: #E8DCDA;
+
+  /* Typography */
+  --font-primary: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 4rem;
+  --spacing-xl: 6rem;
+
+  /* Borders */
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 24px;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(74, 59, 57, 0.05);
+  --shadow-md: 0 4px 16px rgba(74, 59, 57, 0.08);
+  --shadow-lg: 0 12px 32px rgba(74, 59, 57, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+p {
+  margin-bottom: var(--spacing-sm);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Base utility classes */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.section {
+  padding: var(--spacing-xl) 0;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-primary);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-weight: 500;
+  font-family: var(--font-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(212, 122, 107, 0.3);
+  color: #fff;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .section {
+    padding: var(--spacing-lg) 0;
+  }
+  .section-title {
+    font-size: 2rem;
+  }
+}

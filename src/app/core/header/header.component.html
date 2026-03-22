@@ -1,0 +1,19 @@
+<header class="header">
+  <div class="container header-container">
+    <div class="logo">
+      <a href="#">Jessica Regina</a>
+    </div>
+    <nav class="nav" [class.nav-open]="isMenuOpen">
+      <a href="#sobre" (click)="closeMenu()">Sobre Mim</a>
+      <a href="#especialidades" (click)="closeMenu()">Especialidades</a>
+      <a href="#como-funciona" (click)="closeMenu()">Como Funciona</a>
+      <a href="#faq" (click)="closeMenu()">Dúvidas</a>
+    </nav>
+    <a href="https://wa.me/5511999999999" target="_blank" class="btn btn-outline cta-header">Agendar Consulta</a>
+    <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
