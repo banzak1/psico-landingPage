@@ -4,18 +4,56 @@
       <h3>Jessica Regina</h3>
       <p>Psicóloga Clínica • TCC • Atendimento Infantil</p>
       <p>CRP: 00/00000</p>
+      
+      <div class="footer-contact-info mt-4">
+        <h4>Contato Direto</h4>
+        <p>Email: jessicareginaosouza&#64;gmail.com</p>
+        <p>WhatsApp: (75) 98229-4244</p>
+        <p>Local: Atendimento Online e Presencial</p>
+      </div>
     </div>
+    
     <div class="footer-links">
       <h4>Links Úteis</h4>
       <a href="#sobre">Sobre Mim</a>
       <a href="#especialidades">Especialidades</a>
       <a href="#faq">Dúvidas Frequentes</a>
     </div>
-    <div class="footer-contact">
-      <h4>Contato</h4>
-      <p>Email: jessicareginaosouza&#64;gmail.com</p>
-      <p>WhatsApp: (75) 9829-4244</p>
-      <p>Local: Atendimento Online e Presencial</p>
+
+    <div class="footer-form-section">
+      <h4>Gostaria de agendar uma consulta?</h4>
+      <p>Deixe seus dados e entrarei em contato o mais breve possível.</p>
+      
+      <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+        <div class="form-group">
+          <input type="text" formControlName="name" placeholder="Seu nome completo" class="form-control">
+          <small class="error-text" *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched">Nome é obrigatório.</small>
+        </div>
+        
+        <div class="form-group">
+          <input type="email" formControlName="email" placeholder="Seu melhor e-mail" class="form-control">
+          <small class="error-text" *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">E-mail válido é obrigatório.</small>
+        </div>
+        
+        <div class="form-group">
+          <input type="tel" formControlName="phone" placeholder="Seu telefone/WhatsApp" class="form-control">
+          <small class="error-text" *ngIf="contactForm.get('phone')?.invalid && contactForm.get('phone')?.touched">Telefone/WhatsApp é obrigatório.</small>
+        </div>
+        
+        <div class="form-group">
+          <textarea formControlName="message" rows="3" placeholder="Como posso te ajudar?" class="form-control"></textarea>
+          <small class="error-text" *ngIf="contactForm.get('message')?.invalid && contactForm.get('message')?.touched">Mensagem é obrigatória.</small>
+        </div>
+        
+        <div class="submit-feedback">
+          <div class="success-message" *ngIf="submitSuccess">Mensagem enviada com sucesso! Entrarei em contato.</div>
+          <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Enviando...' : 'Enviar Mensagem' }}
+        </button>
+      </form>
     </div>
   </div>
   <div class="footer-bottom">

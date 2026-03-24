@@ -41,6 +41,14 @@ O fluxo de navegação da página (Single Page Application) funciona da seguinte
 
 ---
 
+## ☁️ Backend e Infraestrutura (Firebase)
+
+A Landing Page foi configurada para utilizar o ecosistema do **Firebase** para os recursos dinâmicos, sendo integrado à aplicação através do pacote `@angular/fire`:
+- **Banco de Dados (Firestore):** Responsável por salvar com segurança as mensagens enviadas pelos visitantes no formulário do `FooterComponent` (via `ContactService`).
+- A escalabilidade base já está prevista para futuramente abrigar Painel Administrativo, Google Analytics e deploy via Firebase Hosting.
+
+---
+
 ## 🛠️ Ferramentas de Desenvolvimento e Qualidade
 
 O projeto também conta com scripts e configurações para garantir a integridade técnica durante a sua evolução:

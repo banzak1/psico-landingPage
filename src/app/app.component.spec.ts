@@ -1,10 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { Firestore } from '@angular/fire/firestore';
+import { AuthService } from './core/services/auth.service';
+import { of } from 'rxjs';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [
+        { provide: Firestore, useValue: {} },
+        { provide: AuthService, useValue: { userProfile$: of(null) } }
+      ]
     }).compileComponents();
   });
 

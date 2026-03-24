@@ -8,8 +8,17 @@
       <a href="#especialidades" (click)="closeMenu()">Especialidades</a>
       <a href="#como-funciona" (click)="closeMenu()">Como Funciona</a>
       <a href="#faq" (click)="closeMenu()">Dúvidas</a>
+      
+      <ng-container *ngIf="authService.userProfile$ | async as user; else loginTemplate">
+        <a *ngIf="user.role === 'admin'" href="#painel-admin" class="admin-badge" (click)="closeMenu()">⚙️ Admin</a>
+        <button (click)="logout()" class="btn-link">Sair</button>
+      </ng-container>
+      <ng-template #loginTemplate>
+        <button (click)="login()" class="btn-link">Acesso Especialista</button>
+      </ng-template>
+
     </nav>
-    <a href="https://wa.me/557598294244" target="_blank" class="btn btn-outline cta-header">Agendar Consulta</a>
+    <a href="https://wa.me/5575982294244" target="_blank" class="btn btn-outline cta-header">Agendar Consulta</a>
     <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle Menu">
       <span></span>
       <span></span>

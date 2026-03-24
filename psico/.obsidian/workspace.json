@@ -11,10 +11,14 @@
             "id": "176bc32feb851a08",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Visualização em gráfico"
+              "type": "markdown",
+              "state": {
+                "file": "FooterComponent.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "FooterComponent"
             }
           }
         ]
@@ -183,6 +187,8 @@
   },
   "active": "176bc32feb851a08",
   "lastOpenFiles": [
+    "HowItWorksComponent.md",
+    "ServicesComponent.md",
     "Visão Geral do Projeto.md",
     "FooterComponent.md",
     "Diretrizes de Código.md",
@@ -192,8 +198,6 @@
     "AppComponent.md",
     "Features.md",
     "Core.md",
-    "HowItWorksComponent.md",
-    "ServicesComponent.md",
     "AboutComponent.md",
     "HeroComponent.md",
     "HeaderComponent.md",
