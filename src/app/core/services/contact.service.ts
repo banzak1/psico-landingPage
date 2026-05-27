@@ -1,8 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, addDoc } from '@angular/fire/firestore';
-import { from, Observable } from 'rxjs';
+import { from, Observable, switchMap, take } from 'rxjs';
+import { AuthService } from './auth.service';
 
 export interface ContactLead {
+  uid: string;
   name: string;
   email: string;
   phone?: string;
@@ -15,11 +17,21 @@ export interface ContactLead {
 })
 export class ContactService {
   private firestore: Firestore = inject(Firestore);
+  private authService: AuthService = inject(AuthService);
 
-  saveLead(lead: ContactLead): Observable<string> {
-    const leadsCollection = collection(this.firestore, 'leads');
-    // Save to the 'leads' collection in Firestore
-    const promise = addDoc(leadsCollection, lead).then(docRef => docRef.id);
-    return from(promise);
+  saveLead(lead: Omit<ContactLead, 'uid' | 'createdAt'>): Observable<string> {
+    return this.authService.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        const completeLead: ContactLead = {
+          ...lead,
+          uid: user?.uid ?? 'anonymous',
+          createdAt: new Date().toISOString()
+        };
+        const leadsCollection = collection(this.firestore, 'leads');
+        const promise = addDoc(leadsCollection, completeLead).then(docRef => docRef.id);
+        return from(promise);
+      })
+    );
   }
 }

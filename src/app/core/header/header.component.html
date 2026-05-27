@@ -8,17 +8,46 @@
       <a href="#especialidades" (click)="closeMenu()">Especialidades</a>
       <a href="#como-funciona" (click)="closeMenu()">Como Funciona</a>
       <a href="#faq" (click)="closeMenu()">Dúvidas</a>
-      
-      <ng-container *ngIf="authService.userProfile$ | async as user; else loginTemplate">
-        <a *ngIf="user.role === 'admin'" href="#painel-admin" class="admin-badge" (click)="closeMenu()">⚙️ Admin</a>
-        <button (click)="logout()" class="btn-link">Sair</button>
-      </ng-container>
-      <ng-template #loginTemplate>
-        <button (click)="login()" class="btn-link">Acesso Especialista</button>
-      </ng-template>
 
+      <!-- Admin badge (só aparece para admins, depende do Firestore) -->
+      <ng-container *ngIf="authService.userProfile$ | async as user">
+        <a *ngIf="user.role === 'admin'" href="#painel-admin" class="admin-badge" (click)="closeMenu()">⚙️ Admin</a>
+      </ng-container>
+
+      <!-- Botão Auth no mobile (dentro do nav) -->
+      <button
+        *ngIf="(authService.isLoggedIn$ | async); else mobileLoginBtn"
+        (click)="logout()"
+        class="btn-auth btn-auth--logout mobile-auth-btn">
+        Sair
+      </button>
+      <ng-template #mobileLoginBtn>
+        <button
+          (click)="login()"
+          class="btn-auth btn-auth--login mobile-auth-btn">
+          Entrar
+        </button>
+      </ng-template>
     </nav>
-    <a href="https://wa.me/5575982294244" target="_blank" class="btn btn-outline cta-header">Agendar Consulta</a>
+
+    <!-- Botão Auth no desktop (fora do nav) -->
+    <div class="header-actions">
+      <button
+        *ngIf="(authService.isLoggedIn$ | async); else desktopLoginBtn"
+        (click)="logout()"
+        class="btn-auth btn-auth--logout desktop-auth-btn">
+        Sair
+      </button>
+      <ng-template #desktopLoginBtn>
+        <button
+          (click)="login()"
+          class="btn-auth btn-auth--login desktop-auth-btn">
+          Entrar
+        </button>
+      </ng-template>
+      <a href="https://wa.me/5575982294244" target="_blank" class="btn btn-outline cta-header">Agendar Consulta</a>
+    </div>
+
     <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle Menu">
       <span></span>
       <span></span>

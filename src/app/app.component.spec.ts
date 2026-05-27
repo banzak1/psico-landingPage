@@ -1,3 +1,5 @@
+require('../../jest.init');
+
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { Firestore } from '@angular/fire/firestore';
@@ -9,7 +11,7 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
-        { provide: Firestore, useValue: {} },
+        { provide: Firestore, useValue: null },
         { provide: AuthService, useValue: { userProfile$: of(null) } }
       ]
     }).compileComponents();

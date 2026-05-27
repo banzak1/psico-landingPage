@@ -1,4 +1,4 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
@@ -7,6 +7,7 @@ import { getAnalytics, provideAnalytics, ScreenTrackingService } from '@angular/
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
+import { AuthService } from './core/services/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,6 +16,12 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
     provideAnalytics(() => getAnalytics()),
-    ScreenTrackingService
+    ScreenTrackingService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (authService: AuthService) => () => authService.processRedirectResult(),
+      deps: [AuthService],
+      multi: true
+    }
   ]
 };

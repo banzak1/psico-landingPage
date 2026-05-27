@@ -8,7 +8,7 @@ import { ContactService, ContactLead } from '../services/contact.service';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './footer.component.html',
-  styleUrl: './footer.component.css'
+  styleUrl: './footer.component.scss'
 })
 export class FooterComponent {
   private fb = inject(FormBuilder);
@@ -44,7 +44,7 @@ export class FooterComponent {
         this.isSubmitting = false;
         this.submitSuccess = true;
         this.contactForm.reset();
-        
+
         setTimeout(() => this.submitSuccess = false, 5000);
       },
       error: (err) => {

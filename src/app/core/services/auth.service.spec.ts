@@ -1,7 +1,10 @@
+require('../../../../jest.init');
+
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
-import { Auth } from '@angular/fire/auth';
+import { Auth, User } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
+import { of, firstValueFrom } from 'rxjs';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -9,8 +12,9 @@ describe('AuthService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        { provide: Auth, useValue: {} },
-        { provide: Firestore, useValue: {} }
+        AuthService,
+        { provide: Auth, useValue: null },
+        { provide: Firestore, useValue: null }
       ]
     });
     service = TestBed.inject(AuthService);
@@ -18,5 +22,51 @@ describe('AuthService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  describe('isLoggedIn$', () => {
+    it('should emit true when user$ emits a user', async () => {
+      jest.spyOn(service, 'user$', 'get').mockReturnValue(of({ uid: '123' } as User));
+      const result = await firstValueFrom(service.isLoggedIn$);
+      expect(result).toBe(true);
+    });
+
+    it('should emit false when user$ emits null', async () => {
+      jest.spyOn(service, 'user$', 'get').mockReturnValue(of(null));
+      const result = await firstValueFrom(service.isLoggedIn$);
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('userProfile$', () => {
+    it('should emit null when user is not logged in', async () => {
+      jest.spyOn(service, 'user$', 'get').mockReturnValue(of(null));
+      const result = await firstValueFrom(service.userProfile$);
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('loginWithGoogle', () => {
+    it('should be a callable method', () => {
+      expect(typeof service.loginWithGoogle).toBe('function');
+    });
+  });
+
+  describe('logout', () => {
+    it('should be a callable method', () => {
+      expect(typeof service.logout).toBe('function');
+    });
+  });
+
+  describe('processRedirectResult', () => {
+    it('should be a callable method', () => {
+      expect(typeof service.processRedirectResult).toBe('function');
+    });
+
+    it('should catch errors gracefully', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      await service.processRedirectResult();
+      expect(consoleSpy).toHaveBeenCalled();
+    });
   });
 });

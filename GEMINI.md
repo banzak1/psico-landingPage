@@ -23,7 +23,7 @@ Contexto: Este repositório é uma Landing Page completa, responsiva e de alta p
 
 ## Rotas & Navegação
 - Rotas carregadas por lazy: manter comentário `/* webpackChunkName: "nome" */` para otimizar chunks.
-- Para novas rotas globais, editar apenas `app-routing.module.ts`; para rotas de domínio, criar/alterar `<feature>.routes.ts`.
+- Para novas rotas globais, editar apenas `app.routes.ts`; para rotas de domínio, criar/alterar `<feature>.routes.ts`.
 
 ## Build & Execução
 - Desenvolvimento local: `npm run local` (porta 4202). Ambientes: `local:dev|prd` mudam replacements de `environment.*`.

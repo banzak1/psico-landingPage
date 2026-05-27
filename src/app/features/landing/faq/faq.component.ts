@@ -11,7 +11,7 @@ interface FaqItem {
   standalone: true,
   imports: [],
   templateUrl: './faq.component.html',
-  styleUrl: './faq.component.css'
+  styleUrl: './faq.component.scss'
 })
 export class FaqComponent {
   faqs: FaqItem[] = [

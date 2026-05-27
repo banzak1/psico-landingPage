@@ -7,7 +7,7 @@ import { AuthService } from '../services/auth.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+  styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
   authService = inject(AuthService);
@@ -22,12 +22,8 @@ export class HeaderComponent {
   }
 
   async login() {
-    try {
-      await this.authService.loginWithGoogle();
-      this.closeMenu();
-    } catch (error) {
-      console.error('Erro de login:', error);
-    }
+    await this.authService.loginWithGoogle();
+    // O navegador redireciona para o Google, o código a seguir não executa.
   }
 
   async logout() {

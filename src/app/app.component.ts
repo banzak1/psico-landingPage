@@ -22,7 +22,7 @@ import { FaqComponent } from './features/landing/faq/faq.component';
     FaqComponent
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'psico-landing-page';

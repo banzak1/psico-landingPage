@@ -35,20 +35,65 @@
   font-size: 0.95rem;
 }
 
-.nav a:hover,
-.nav .btn-link:hover {
+.nav a:hover {
   color: var(--color-primary);
 }
 
-.btn-link {
-  background: none;
-  border: none;
-  padding: 0;
+/* ── Botão de Autenticação ── */
+.btn-auth {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 22px;
+  border-radius: 50px;
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  color: var(--color-text-primary);
-  font-family: inherit;
-  font-weight: 500;
-  font-size: 0.95rem;
+  border: 2px solid transparent;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  letter-spacing: 0.02em;
+}
+
+/* Entrar – verde pastel */
+.btn-auth--login {
+  color: #4a8c6a;
+  border-color: #a8d5ba;
+}
+
+.btn-auth--login:hover {
+  background-color: #a8d5ba;
+  color: #2d5a41;
+  border-color: #8cc4a4;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(168, 213, 186, 0.4);
+}
+
+/* Sair – vermelho pastel */
+.btn-auth--logout {
+  color: #b05a5a;
+  border-color: #e8a8a8;
+}
+
+.btn-auth--logout:hover {
+  background-color: #e8a8a8;
+  color: #7a2e2e;
+  border-color: #d48e8e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(232, 168, 168, 0.4);
+}
+
+/* ── Header Actions (desktop) ── */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Mobile: esconde botão de auth no desktop, mostra no nav */
+.mobile-auth-btn {
+  display: none;
 }
 
 .cta-header {
@@ -87,14 +132,18 @@
     transition: clip-path 0.3s ease;
     visibility: hidden;
   }
-  
+
   .nav.nav-open {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
     visibility: visible;
   }
 
-  .cta-header {
+  .header-actions {
     display: none;
+  }
+
+  .mobile-auth-btn {
+    display: inline-flex;
   }
 
   .menu-toggle {
