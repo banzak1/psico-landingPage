@@ -11,7 +11,7 @@
 
       <!-- Admin badge (só aparece para admins, depende do Firestore) -->
       <ng-container *ngIf="authService.userProfile$ | async as user">
-        <a *ngIf="user.role === 'admin'" href="#painel-admin" class="admin-badge" (click)="closeMenu()">⚙️ Admin</a>
+        <a *ngIf="user.role === 'admin'" routerLink="/admin" class="admin-badge" (click)="closeMenu()">⚙️ Admin</a>
       </ng-container>
 
       <!-- Botão Auth no mobile (dentro do nav) -->
@@ -24,8 +24,9 @@
       <ng-template #mobileLoginBtn>
         <button
           (click)="login()"
+          [disabled]="isLoggingIn"
           class="btn-auth btn-auth--login mobile-auth-btn">
-          Entrar
+          {{ isLoggingIn ? 'Entrando...' : 'Entrar' }}
         </button>
       </ng-template>
     </nav>
@@ -41,12 +42,15 @@
       <ng-template #desktopLoginBtn>
         <button
           (click)="login()"
+          [disabled]="isLoggingIn"
           class="btn-auth btn-auth--login desktop-auth-btn">
-          Entrar
+          {{ isLoggingIn ? 'Entrando...' : 'Entrar' }}
         </button>
       </ng-template>
       <a href="https://wa.me/5575982294244" target="_blank" class="btn btn-outline cta-header">Agendar Consulta</a>
     </div>
+
+    <p *ngIf="loginError" class="login-error">{{ loginError }}</p>
 
     <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle Menu">
       <span></span>

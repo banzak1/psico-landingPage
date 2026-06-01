@@ -1,17 +1,20 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
   authService = inject(AuthService);
   isMenuOpen = false;
+  isLoggingIn = false;
+  loginError = '';
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
@@ -21,9 +24,24 @@ export class HeaderComponent {
     this.isMenuOpen = false;
   }
 
-  async login() {
-    await this.authService.loginWithGoogle();
-    // O navegador redireciona para o Google, o código a seguir não executa.
+  login() {
+    if (this.isLoggingIn) return;
+    this.isLoggingIn = true;
+    this.loginError = '';
+    this.authService.loginWithGoogle()
+      .then(() => {
+        console.log('[Header] Login bem-sucedido');
+      })
+      .catch((error: unknown) => {
+        const msg = error instanceof Error ? error.message : String(error);
+        console.error('[Header] Login falhou:', msg);
+        this.loginError = msg.includes('popup')
+          ? 'Popup bloqueado. Permita popups e tente novamente.'
+          : 'Erro ao fazer login. Verifique o console.';
+      })
+      .finally(() => {
+        this.isLoggingIn = false;
+      });
   }
 
   async logout() {

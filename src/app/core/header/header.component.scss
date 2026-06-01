@@ -117,6 +117,21 @@
   transition: all 0.3s ease;
 }
 
+.login-error {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f8d7da;
+  color: #721c24;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  max-width: 90%;
+  text-align: center;
+  z-index: 999;
+}
+
 @media (max-width: 768px) {
   .nav {
     position: absolute;

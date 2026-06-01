@@ -1,6 +1,5 @@
-require('../../../../jest.init');
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { HeaderComponent } from './header.component';
 import { AuthService, UserProfile } from '../services/auth.service';
 import { BehaviorSubject } from 'rxjs';
@@ -26,6 +25,7 @@ describe('HeaderComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
       providers: [
+        provideRouter([]),
         { provide: AuthService, useValue: mockAuthService }
       ]
     }).compileComponents();
@@ -37,6 +37,11 @@ describe('HeaderComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should start with isLoggingIn as false and no error', () => {
+    expect(component.isLoggingIn).toBe(false);
+    expect(component.loginError).toBe('');
   });
 
   it('should render login button when user is not authenticated', () => {
@@ -87,6 +92,27 @@ describe('HeaderComponent', () => {
     const loginBtn = compiled.querySelector('.desktop-auth-btn.btn-auth--login') as HTMLButtonElement;
     loginBtn?.click();
     expect(mockAuthService.loginWithGoogle).toHaveBeenCalled();
+  });
+
+  it('should show "Entrando..." and disable button while logging in', () => {
+    isLoggedInSubject.next(false);
+    component.isLoggingIn = true;
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const loginBtn = compiled.querySelector('.desktop-auth-btn.btn-auth--login') as HTMLButtonElement;
+    expect(loginBtn?.disabled).toBe(true);
+    expect(loginBtn?.textContent?.trim()).toBe('Entrando...');
+  });
+
+  it('should ignore clicks while already logging in', () => {
+    isLoggedInSubject.next(false);
+    component.isLoggingIn = true;
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const loginBtn = compiled.querySelector('.desktop-auth-btn.btn-auth--login') as HTMLButtonElement;
+    (mockAuthService.loginWithGoogle as jest.Mock).mockClear();
+    loginBtn?.click();
+    expect(mockAuthService.loginWithGoogle).not.toHaveBeenCalled();
   });
 
   it('should call logout on logout button click', () => {
