@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "code-reviewer",
+  "agent": {
+    "code-reviewer": {
+      "model": "deepseek/deepseek-chat",
+      "mode": "primary"
+    }
+  }
+}
