@@ -10,7 +10,7 @@ import {
   signInWithPopup
 } from 'firebase/auth';
 import { Firestore, doc, setDoc, docData, getDoc } from '@angular/fire/firestore';
-import { Observable, of, switchMap, map, firstValueFrom, first, shareReplay } from 'rxjs';
+import { Observable, of, switchMap, map, shareReplay, filter, first } from 'rxjs';
 
 export interface UserProfile {
   uid: string;
@@ -28,27 +28,40 @@ export class AuthService {
   private firestore: Firestore = inject(Firestore);
   private ngZone: NgZone = inject(NgZone);
 
-  private userObservable$: Observable<User | null> | null = null;
-
+  private _user$: Observable<User | null> | null = null;
+  private profileSyncStarted = false;
   public get user$(): Observable<User | null> {
-    if (!this.userObservable$) {
-      this.userObservable$ = user(this.auth).pipe(shareReplay(1));
+    if (!this._user$) {
+      this._user$ = user(this.auth).pipe(shareReplay(1));
     }
-    return this.userObservable$;
+    this.startProfileSync();
+    return this._user$;
   }
 
+  private _userProfile$: Observable<UserProfile | null | undefined> | null = null;
   public get userProfile$(): Observable<UserProfile | null | undefined> {
-    return this.user$.pipe(
-      switchMap((firebaseUser) => {
-        if (firebaseUser === null) return of(null);
-        const userRef = doc(this.firestore, `users/${firebaseUser.uid}`);
-        return (docData(userRef) as Observable<UserProfile>);
-      })
-    );
+    if (!this._userProfile$) {
+      this._userProfile$ = this.user$.pipe(
+        switchMap((firebaseUser) => {
+          if (firebaseUser === null) return of(null);
+          const userRef = doc(this.firestore, `users/${firebaseUser.uid}`);
+          return (docData(userRef) as Observable<UserProfile>);
+        }),
+        shareReplay(1)
+      );
+    }
+    return this._userProfile$;
   }
 
+  private _isLoggedIn$: Observable<boolean> | null = null;
   public get isLoggedIn$(): Observable<boolean> {
-    return this.user$.pipe(map((u) => !!u));
+    if (!this._isLoggedIn$) {
+      this._isLoggedIn$ = this.user$.pipe(
+        map((u) => !!u),
+        shareReplay(1)
+      );
+    }
+    return this._isLoggedIn$;
   }
 
   loginWithGoogle(): Promise<void> {
@@ -70,17 +83,21 @@ export class AuthService {
   }
 
   /**
-   * Garante que utilizadores já autenticados tenham perfil no Firestore.
-   * Chamado via APP_INITIALIZER durante o bootstrap.
+   * Reactively ensures already-authenticated users have a Firestore profile.
+   * Triggered lazily on first user$ access, avoiding the APP_INITIALIZER deadlock with AngularFire.
+   * Uses a flag to prevent duplicate subscriptions across multiple user$ accesses.
    */
-  async processRedirectResult(): Promise<void> {
-    try {
-      const authUser = await firstValueFrom(this.user$.pipe(first()));
-      if (!authUser) return;
-      await this.ensureProfile(authUser);
-    } catch (error) {
-      console.error('[AUTH] Erro no processRedirectResult:', error);
-    }
+  private startProfileSync(): void {
+    if (this.profileSyncStarted) return;
+    this.profileSyncStarted = true;
+
+    this._user$!.pipe(
+      filter((u): u is User => u !== null),
+      first()
+    ).subscribe({
+      next: (authUser) => this.ensureProfile(authUser),
+      error: (err) => console.error('[AUTH] Erro no profileSync:', err)
+    });
   }
 
   private async ensureProfile(firebaseUser: User): Promise<void> {

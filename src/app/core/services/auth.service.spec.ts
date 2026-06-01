@@ -59,15 +59,4 @@ describe('AuthService', () => {
       expect(typeof service.logout).toBe('function');
     });
   });
-
-  describe('processRedirectResult', () => {
-    it('should be a callable method', () => {
-      expect(typeof service.processRedirectResult).toBe('function');
-    });
-
-    it('should handle no user gracefully', async () => {
-      jest.spyOn(service, 'user$', 'get').mockReturnValue(of(null));
-      await expect(service.processRedirectResult()).resolves.toBeUndefined();
-    });
-  });
 });
