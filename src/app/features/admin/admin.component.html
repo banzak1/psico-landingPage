@@ -1,0 +1,69 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <h2>Jessica Regina</h2>
+      <span class="sidebar-role">Painel Administrativo</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/" class="sidebar-link">← Voltar ao Site</a>
+      <button (click)="logout()" class="sidebar-link sidebar-link--logout">Sair</button>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <div class="admin-main">
+    <header class="admin-header">
+      <h1>📋 Leads Recebidos</h1>
+      <p class="admin-subtitle">Solicitações de contato enviadas pelos visitantes do site.</p>
+    </header>
+
+    <!-- Loading state -->
+    <div *ngIf="isLoading()" class="admin-state">
+      <div class="spinner"></div>
+      <p>Carregando leads...</p>
+    </div>
+
+    <!-- Error state -->
+    <div *ngIf="hasError()" class="admin-state admin-state--error">
+      <p>❌ Erro ao carregar os leads. Tente novamente mais tarde.</p>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!isLoading() && !hasError() && leads().length === 0" class="admin-state">
+      <p>📭 Nenhum lead recebido ainda.</p>
+    </div>
+
+    <!-- Leads table -->
+    <div *ngIf="!isLoading() && !hasError() && leads().length > 0" class="table-wrapper">
+      <table class="leads-table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>Mensagem</th>
+            <th>Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let lead of leads()">
+            <td>{{ lead.name }}</td>
+            <td><a href="mailto:{{ lead.email }}">{{ lead.email }}</a></td>
+            <td>
+              <ng-container *ngIf="lead.phone; else noPhone">
+                <a href="https://wa.me/55{{ lead.phone }}" target="_blank" rel="noopener">
+                  {{ lead.phone }}
+                </a>
+              </ng-container>
+              <ng-template #noPhone>—</ng-template>
+            </td>
+            <td class="message-cell">{{ lead.message }}</td>
+            <td>{{ lead.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
