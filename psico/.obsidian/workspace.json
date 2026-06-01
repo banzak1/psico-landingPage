@@ -183,6 +183,7 @@
   },
   "active": "176bc32feb851a08",
   "lastOpenFiles": [
+    "Arquitetura - Autenticação e Firebase.md",
     "Correções - Login Google Auth.md",
     "Auditoria - Login Google Auth.md",
     "Visão Geral do Projeto.md",
@@ -190,7 +191,6 @@
     "FooterComponent.md",
     "HowItWorksComponent.md",
     "Diretrizes de Código.md",
-    "Arquitetura - Autenticação e Firebase.md",
     "Regras de Desenvolvimento.md",
     "FaqComponent.md",
     "AppComponent.md",

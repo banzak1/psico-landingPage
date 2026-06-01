@@ -7,17 +7,22 @@ Este documento resume as correções implementadas com base na auditoria realiza
 
 ---
 
-## 🔴 BUG 1 — `handleRedirectResult()` no `constructor` (CORRIGIDO ✅)
+## 🔴 BUG 1 — `handleRedirectResult()` no `constructor` / `APP_INITIALIZER` (CORRIGIDO ✅)
 
-**O que foi feito:**
-- Removido o `constructor` que chamava `handleRedirectResult()` imediatamente.
-- Criado novo método público `initRedirectListener()`.
-- Registrado um `APP_INITIALIZER` no `app.config.ts` que chama `initRedirectListener()` durante o bootstrap do Angular.
-- Isso garante que o Firebase Auth já está 100% inicializado quando o resultado do redirect é processado.
+**Histórico e o que foi feito:**
+1. A primeira tentativa de correção utilizou um `APP_INITIALIZER` para chamar `processRedirectResult()` (antigo `handleRedirectResult`) durante o bootstrap.
+2. **Problema subsequente (Deadlock):** O AngularFire requer que a aplicação esteja completamente inicializada para fornecer a instância do `user()`. O uso do `APP_INITIALIZER` bloqueava o bootstrap aguardando o Firebase, criando um deadlock onde a interface renderizava parcialmente e nenhum clique funcionava.
+3. **Loop Infinito de Change Detection:** Ao ler `authService.isLoggedIn$ | async` no HTML, os getters do serviço retornavam novas instâncias de Observable (`.pipe()`), o que fazia o Angular re-inscrever infinitamente e travar a thread principal (explicando porque só o scroll funcionava).
+
+**Solução Definitiva:**
+- Removido o `APP_INITIALIZER` do `app.config.ts`.
+- O sincronismo de perfil (`startProfileSync`) agora é disparado **de forma lazy** (na primeira vez que o getter `user$` é acessado), eliminando dependências do ciclo de inicialização.
+- Refatorado os getters (`user$`, `userProfile$`, `isLoggedIn$`) para fazer cache das instâncias do `Observable`, garantindo a estabilidade do Angular e encerrando o loop de change detection.
 
 **Arquivos alterados:**
 - `src/app/core/services/auth.service.ts`
 - `src/app/app.config.ts`
+- `src/app/core/services/auth.service.spec.ts`
 
 ---
 
