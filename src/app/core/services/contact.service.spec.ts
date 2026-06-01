@@ -1,5 +1,3 @@
-require('../../../../jest.init');
-
 import { TestBed } from '@angular/core/testing';
 import { ContactService } from './contact.service';
 import { AuthService } from './auth.service';

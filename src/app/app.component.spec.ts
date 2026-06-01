@@ -1,6 +1,5 @@
-require('../../jest.init');
-
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
 import { Firestore } from '@angular/fire/firestore';
 import { AuthService } from './core/services/auth.service';
@@ -11,6 +10,7 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
+        provideRouter([]),
         { provide: Firestore, useValue: null },
         { provide: AuthService, useValue: { userProfile$: of(null) } }
       ]
@@ -29,11 +29,12 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('psico-landing-page');
   });
 
-  it('should render main app structure', () => {
+  it('should render header, router-outlet and footer', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('app-header')).toBeTruthy();
-    expect(compiled.querySelector('app-hero')).toBeTruthy();
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
+    expect(compiled.querySelector('app-footer')).toBeTruthy();
   });
 });

@@ -1,5 +1,3 @@
-require('../../../../jest.init');
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FooterComponent } from './footer.component';
 import { ContactService } from '../services/contact.service';

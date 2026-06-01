@@ -1,5 +1,3 @@
-require('../../../../jest.init');
-
 import { TestBed } from '@angular/core/testing';
 import { Router, UrlTree } from '@angular/router';
 import { adminGuard } from './admin.guard';
