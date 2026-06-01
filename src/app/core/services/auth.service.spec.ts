@@ -1,5 +1,3 @@
-require('../../../../jest.init');
-
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
 import { Auth, User } from '@angular/fire/auth';
@@ -13,7 +11,7 @@ describe('AuthService', () => {
     TestBed.configureTestingModule({
       providers: [
         AuthService,
-        { provide: Auth, useValue: null },
+        { provide: Auth, useValue: { currentUser: null } },
         { provide: Firestore, useValue: null }
       ]
     });
@@ -50,6 +48,10 @@ describe('AuthService', () => {
     it('should be a callable method', () => {
       expect(typeof service.loginWithGoogle).toBe('function');
     });
+
+    it('should reject when auth is null', async () => {
+      await expect(service.loginWithGoogle()).rejects.toThrow();
+    });
   });
 
   describe('logout', () => {
@@ -63,10 +65,9 @@ describe('AuthService', () => {
       expect(typeof service.processRedirectResult).toBe('function');
     });
 
-    it('should catch errors gracefully', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      await service.processRedirectResult();
-      expect(consoleSpy).toHaveBeenCalled();
+    it('should handle no user gracefully', async () => {
+      jest.spyOn(service, 'user$', 'get').mockReturnValue(of(null));
+      await expect(service.processRedirectResult()).resolves.toBeUndefined();
     });
   });
 });

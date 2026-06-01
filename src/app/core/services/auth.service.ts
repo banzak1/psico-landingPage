@@ -1,15 +1,16 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, NgZone } from '@angular/core';
 import {
   Auth,
   signOut,
+  GoogleAuthProvider,
   user,
-  User
+  User,
 } from '@angular/fire/auth';
 import {
-  getRedirectResult as firebaseGetRedirectResult
+  signInWithPopup
 } from 'firebase/auth';
 import { Firestore, doc, setDoc, docData, getDoc } from '@angular/fire/firestore';
-import { Observable, of, switchMap, map, catchError } from 'rxjs';
+import { Observable, of, switchMap, map, firstValueFrom, first, shareReplay } from 'rxjs';
 
 export interface UserProfile {
   uid: string;
@@ -25,52 +26,43 @@ export interface UserProfile {
 export class AuthService {
   private auth: Auth = inject(Auth);
   private firestore: Firestore = inject(Firestore);
+  private ngZone: NgZone = inject(NgZone);
 
-  // Observable que espelha o estado nativo do Firebase Authentication
+  private userObservable$: Observable<User | null> | null = null;
+
   public get user$(): Observable<User | null> {
-    return user(this.auth);
+    if (!this.userObservable$) {
+      this.userObservable$ = user(this.auth).pipe(shareReplay(1));
+    }
+    return this.userObservable$;
   }
 
-  /**
-   * Observable que busca os dados customizados (como o 'role') no Firestore.
-   * Emite:
-   *  - undefined: Firebase ainda carregando estado da sessão
-   *  - null: sessão resolvida, usuário definitivamente deslogado
-   *  - UserProfile: usuário logado com perfil encontrado
-   */
   public get userProfile$(): Observable<UserProfile | null | undefined> {
     return this.user$.pipe(
       switchMap((firebaseUser) => {
         if (firebaseUser === null) return of(null);
         const userRef = doc(this.firestore, `users/${firebaseUser.uid}`);
-        return (docData(userRef) as Observable<UserProfile>).pipe(
-          catchError((error) => {
-            console.error('Erro ao buscar perfil do usuário no Firestore:', error);
-            return of(null);
-          })
-        );
+        return (docData(userRef) as Observable<UserProfile>);
       })
     );
   }
 
-  // Observable simples para saber se o usuário está autenticado (independe do Firestore)
   public get isLoggedIn$(): Observable<boolean> {
     return this.user$.pipe(map((u) => !!u));
   }
 
-  /**
-   * Redireciona a página inteira para o Google para autenticação.
-   * Ao voltar, processRedirectResult() captura o resultado.
-   */
-  async loginWithGoogle(): Promise<void> {
-    try {
-      const { getAuth, signInWithRedirect, GoogleAuthProvider } = await import('firebase/auth');
-      const auth = getAuth();
-      const provider = new GoogleAuthProvider();
-      signInWithRedirect(auth, provider);
-    } catch (error) {
+  loginWithGoogle(): Promise<void> {
+    const provider = new GoogleAuthProvider();
+    // runOutsideAngular previne que zone.js interfira no message listener do popup
+    return this.ngZone.runOutsideAngular(() =>
+      signInWithPopup(this.auth, provider)
+    ).then(result => {
+      console.log('[AUTH] Login concluído:', result.user.email);
+      return this.ensureProfile(result.user);
+    }).catch((error: unknown) => {
       console.error('[AUTH] Erro em loginWithGoogle:', error);
-    }
+      throw error;
+    });
   }
 
   async logout(): Promise<void> {
@@ -78,31 +70,33 @@ export class AuthService {
   }
 
   /**
-   * Processa o resultado do redirect OAuth ao retornar do Google.
-   * Chamado via APP_INITIALIZER para garantir que roda no bootstrap.
-   * Cria o perfil do usuário no Firestore se for o primeiro login.
+   * Garante que utilizadores já autenticados tenham perfil no Firestore.
+   * Chamado via APP_INITIALIZER durante o bootstrap.
    */
   async processRedirectResult(): Promise<void> {
     try {
-      const result = await firebaseGetRedirectResult(this.auth);
-      if (result) {
-        const firebaseUser = result.user;
-        const userRef = doc(this.firestore, `users/${firebaseUser.uid}`);
-        const userSnap = await getDoc(userRef);
-
-        if (!userSnap.exists()) {
-          const newProfile: UserProfile = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-            photoURL: firebaseUser.photoURL,
-            role: 'user'
-          };
-          await setDoc(userRef, newProfile);
-        }
-      }
+      const authUser = await firstValueFrom(this.user$.pipe(first()));
+      if (!authUser) return;
+      await this.ensureProfile(authUser);
     } catch (error) {
-      console.error('Erro ao processar resultado do redirect:', error);
+      console.error('[AUTH] Erro no processRedirectResult:', error);
+    }
+  }
+
+  private async ensureProfile(firebaseUser: User): Promise<void> {
+    const userRef = doc(this.firestore, `users/${firebaseUser.uid}`);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      const newProfile: UserProfile = {
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName,
+        photoURL: firebaseUser.photoURL,
+        role: 'user'
+      };
+      await setDoc(userRef, newProfile);
+      console.log('[AUTH] Perfil criado no Firestore para:', firebaseUser.email);
     }
   }
 }
