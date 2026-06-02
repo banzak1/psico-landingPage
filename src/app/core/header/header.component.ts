@@ -34,10 +34,9 @@ export class HeaderComponent {
       })
       .catch((error: unknown) => {
         const msg = error instanceof Error ? error.message : String(error);
-        console.error('[Header] Login falhou:', msg);
         this.loginError = msg.includes('popup')
           ? 'Popup bloqueado. Permita popups e tente novamente.'
-          : 'Erro ao fazer login. Verifique o console.';
+          : 'Erro ao fazer login. Tente novamente mais tarde.';
       })
       .finally(() => {
         this.isLoggingIn = false;

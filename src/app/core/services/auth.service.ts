@@ -73,7 +73,6 @@ export class AuthService {
       console.log('[AUTH] Login concluído:', result.user.email);
       return this.ensureProfile(result.user);
     }).catch((error: unknown) => {
-      console.error('[AUTH] Erro em loginWithGoogle:', error);
       throw error;
     });
   }
@@ -96,7 +95,7 @@ export class AuthService {
       first()
     ).subscribe({
       next: (authUser) => this.ensureProfile(authUser),
-      error: (err) => console.error('[AUTH] Erro no profileSync:', err)
+      error: () => {}
     });
   }
 
