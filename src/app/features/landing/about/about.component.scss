@@ -4,13 +4,15 @@
 
 .about-container {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1fr;
   gap: var(--spacing-xl);
   align-items: center;
 }
 
 .about-image-wrapper {
   position: relative;
+  max-width: 400px;
+  margin: 0 auto var(--spacing-md);
 }
 
 .about-image {
@@ -23,8 +25,8 @@
 
 .experience-badge {
   position: absolute;
-  bottom: -20px;
-  right: -20px;
+  bottom: -10px;
+  right: 10px;
   background-color: var(--color-primary);
   color: #fff;
   padding: 20px;
@@ -51,7 +53,7 @@
 }
 
 .section-title.text-left {
-  text-align: left;
+  text-align: center;
   margin-bottom: var(--spacing-xs);
 }
 
@@ -60,6 +62,7 @@
   color: var(--color-primary);
   margin-bottom: 5px;
   font-family: var(--font-serif);
+  text-align: center;
 }
 
 .about-credential {
@@ -67,6 +70,7 @@
   color: var(--color-text-secondary);
   margin-bottom: var(--spacing-md);
   font-weight: 500;
+  text-align: center;
 }
 
 .about-content p {
@@ -95,30 +99,30 @@
   color: var(--color-primary);
 }
 
-@media (max-width: 992px) {
+@media (min-width: 992px) {
   .about-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1.2fr;
   }
   
   .about-image-wrapper {
-    max-width: 400px;
-    margin: 0 auto var(--spacing-md);
+    max-width: none;
+    margin: 0;
   }
   
   .experience-badge {
-    bottom: -10px;
-    right: 10px;
+    bottom: -20px;
+    right: -20px;
   }
   
   .section-title.text-left {
-    text-align: center;
+    text-align: left;
   }
   
   .about-name {
-    text-align: center;
+    text-align: left;
   }
   
   .about-credential {
-    text-align: center;
+    text-align: left;
   }
 }

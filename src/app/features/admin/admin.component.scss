@@ -10,32 +10,36 @@ $color-success: #4a8c6a;
 
 .admin-layout {
   display: flex;
+  flex-direction: column;
   min-height: calc(100vh - 128px); // header + footer
   background-color: $color-bg;
 }
 
 /* ── Sidebar ── */
 .admin-sidebar {
-  width: 260px;
+  width: 100%;
   background-color: $color-sidebar;
   color: $color-white;
   display: flex;
-  flex-direction: column;
-  padding: 2rem 1.5rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
   flex-shrink: 0;
 }
 
 .sidebar-brand {
-  margin-bottom: 2.5rem;
+  margin-bottom: 0;
 
   h2 {
     font-family: var(--font-serif);
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin: 0 0 0.25rem;
+    margin: 0;
   }
 
   .sidebar-role {
+    display: none;
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.6);
     letter-spacing: 0.05em;
@@ -45,24 +49,24 @@ $color-success: #4a8c6a;
 
 .sidebar-nav {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.75rem;
-  margin-top: auto;
+  margin-top: 0;
 }
 
 .sidebar-link {
   display: block;
-  padding: 0.6rem 1rem;
+  padding: 0.5rem 0.8rem;
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.85);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-decoration: none;
   transition: background-color 0.2s;
   border: none;
   background: none;
   cursor: pointer;
   text-align: left;
-  width: 100%;
+  white-space: nowrap;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.1);
@@ -80,23 +84,24 @@ $color-success: #4a8c6a;
 /* ── Main content ── */
 .admin-main {
   flex: 1;
-  padding: 2rem;
-  overflow-x: auto;
+  padding: 1rem;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 .admin-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 
   h1 {
     font-family: var(--font-serif);
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     color: $color-text;
     margin: 0 0 0.25rem;
   }
 
   .admin-subtitle {
     color: $color-text-light;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     margin: 0;
   }
 }
@@ -133,19 +138,21 @@ $color-success: #4a8c6a;
   border-radius: 12px;
   border: 1px solid $color-border;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .leads-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  min-width: 600px; /* Garante que não esprema colunas demais no celular */
 
   thead {
     background-color: $color-bg;
     border-bottom: 2px solid $color-border;
 
     th {
-      padding: 0.85rem 1rem;
+      padding: 0.75rem 0.85rem;
       text-align: left;
       font-weight: 600;
       color: $color-text;
@@ -168,7 +175,7 @@ $color-success: #4a8c6a;
     }
 
     td {
-      padding: 0.75rem 1rem;
+      padding: 0.6rem 0.85rem;
       color: $color-text;
       vertical-align: top;
 
@@ -184,7 +191,7 @@ $color-success: #4a8c6a;
   }
 
   .message-cell {
-    max-width: 280px;
+    max-width: 200px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -192,40 +199,59 @@ $color-success: #4a8c6a;
 }
 
 /* ── Responsive ── */
-@media (max-width: 768px) {
+@media (min-width: 992px) {
   .admin-layout {
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .admin-sidebar {
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
+    width: 260px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 2rem 1.5rem;
   }
 
   .sidebar-brand {
-    margin-bottom: 0;
+    margin-bottom: 2.5rem;
 
-    h2 { font-size: 1.1rem; }
-    .sidebar-role { display: none; }
+    h2 { font-size: 1.3rem; margin: 0 0 0.25rem; }
+    .sidebar-role { display: block; }
   }
 
   .sidebar-nav {
-    flex-direction: row;
-    margin-top: 0;
+    flex-direction: column;
+    margin-top: auto;
+  }
+  
+  .sidebar-link {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
   }
 
   .admin-main {
-    padding: 1rem;
+    padding: 2rem;
+  }
+  
+  .admin-header {
+    margin-bottom: 2rem;
+    h1 { font-size: 1.75rem; }
+    .admin-subtitle { font-size: 0.95rem; }
   }
 
   .leads-table {
-    font-size: 0.8rem;
-
-    th, td {
-      padding: 0.5rem 0.6rem;
+    font-size: 0.9rem;
+    
+    thead th {
+      padding: 0.85rem 1rem;
+    }
+    
+    tbody td {
+      padding: 0.75rem 1rem;
+    }
+    
+    .message-cell {
+      max-width: 280px;
     }
   }
 }

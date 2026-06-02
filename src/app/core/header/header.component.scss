@@ -24,9 +24,24 @@
 }
 
 .nav {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-surface);
   display: flex;
+  flex-direction: column;
+  padding: var(--spacing-md);
   gap: var(--spacing-md);
-  align-items: center;
+  box-shadow: var(--shadow-sm);
+  clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+  transition: clip-path 0.3s ease;
+  visibility: hidden;
+}
+
+.nav.nav-open {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  visibility: visible;
 }
 
 .nav a {
@@ -86,14 +101,14 @@
 
 /* ── Header Actions (desktop) ── */
 .header-actions {
-  display: flex;
+  display: none;
   align-items: center;
   gap: var(--spacing-sm);
 }
 
 /* Mobile: esconde botão de auth no desktop, mostra no nav */
 .mobile-auth-btn {
-  display: none;
+  display: inline-flex;
 }
 
 .cta-header {
@@ -101,7 +116,7 @@
 }
 
 .menu-toggle {
-  display: none;
+  display: flex;
   background: none;
   border: none;
   cursor: pointer;
@@ -132,36 +147,26 @@
   z-index: 999;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .nav {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: var(--color-surface);
-    flex-direction: column;
-    padding: var(--spacing-md);
-    gap: var(--spacing-md);
-    box-shadow: var(--shadow-sm);
-    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-    transition: clip-path 0.3s ease;
-    visibility: hidden;
-  }
-
-  .nav.nav-open {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    position: static;
+    flex-direction: row;
+    background-color: transparent;
+    padding: 0;
+    box-shadow: none;
+    clip-path: none;
     visibility: visible;
   }
 
   .header-actions {
-    display: none;
+    display: flex;
   }
 
   .mobile-auth-btn {
-    display: inline-flex;
+    display: none;
   }
 
   .menu-toggle {
-    display: flex;
+    display: none;
   }
 }
