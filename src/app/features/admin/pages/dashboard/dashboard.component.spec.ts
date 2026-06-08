@@ -1,15 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DashboardComponent } from './dashboard.component';
 import { AdminService } from '../../../../core/services/admin.service';
-import { ContactLead } from '../../../../core/services/contact.service';
 import { PatientService } from '../../../../core/services/patient.service';
+import { SessionService } from '../../../../core/services/session.service';
 import { of, throwError, Observable } from 'rxjs';
+import { ContactLead } from '../../../../core/services/contact.service';
+import { provideRouter } from '@angular/router';
 
 describe('DashboardComponent', () => {
   let fixture: ComponentFixture<DashboardComponent>;
   let component: DashboardComponent;
   let mockAdminService: { getLeads: jest.Mock, markLeadAsConverted: jest.Mock };
-  let mockPatientService: { addPatient: jest.Mock };
+  let mockPatientService: { addPatient: jest.Mock, getPatients: jest.Mock };
+  let mockSessionService: { getSessions: jest.Mock };
 
   const mockLeads: ContactLead[] = [
     {
@@ -28,14 +31,20 @@ describe('DashboardComponent', () => {
       markLeadAsConverted: jest.fn().mockReturnValue(of(undefined))
     };
     mockPatientService = {
-      addPatient: jest.fn().mockReturnValue(of('new-patient-id'))
+      addPatient: jest.fn().mockReturnValue(of('new-patient-id')),
+      getPatients: jest.fn().mockReturnValue(of([]))
+    };
+    mockSessionService = {
+      getSessions: jest.fn().mockReturnValue(of([]))
     };
 
     await TestBed.configureTestingModule({
       imports: [DashboardComponent],
       providers: [
+        provideRouter([]),
         { provide: AdminService, useValue: mockAdminService },
-        { provide: PatientService, useValue: mockPatientService }
+        { provide: PatientService, useValue: mockPatientService },
+        { provide: SessionService, useValue: mockSessionService }
       ]
     }).compileComponents();
 
@@ -76,7 +85,7 @@ describe('DashboardComponent', () => {
     newFixture.detectChanges();
 
     const compiled = newFixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Nenhum lead recebido ainda');
+    expect(compiled.textContent).toContain('Nenhum contato novo no momento.');
   });
 
   it('should show error state on failure', () => {
@@ -87,7 +96,7 @@ describe('DashboardComponent', () => {
     newFixture.detectChanges();
 
     const compiled = newFixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Erro ao carregar os leads');
+    expect(compiled.textContent).toContain('Falha ao carregar os dados');
   });
 
   it('should render WhatsApp link when phone is present', () => {
@@ -97,11 +106,11 @@ describe('DashboardComponent', () => {
     expect(whatsappLink?.getAttribute('href')).toContain('11987654321');
   });
 
-  it('should show dash when phone is missing', () => {
+  it('should not render WhatsApp link when phone is missing', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const rows = compiled.querySelectorAll('tbody tr');
-    // Second lead has no phone
-    expect(rows[1].textContent).toContain('—');
+    // Second lead has no phone, so no wa.me link should exist
+    expect(rows[1].innerHTML).not.toContain('wa.me');
   });
 
   it('should call convertLeadToPatient when button is clicked', () => {
