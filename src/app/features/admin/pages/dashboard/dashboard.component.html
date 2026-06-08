@@ -29,6 +29,7 @@
         <th>Telefone</th>
         <th>Mensagem</th>
         <th>Data</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
@@ -43,8 +44,13 @@
           </ng-container>
           <ng-template #noPhone>—</ng-template>
         </td>
-        <td class="message-cell">{{ lead.message }}</td>
+        <td class="message-cell" [title]="lead.message">{{ lead.message }}</td>
         <td>{{ lead.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>
+          <button (click)="convertLeadToPatient(lead)" class="btn-convert" [disabled]="isLoading()">
+            + Paciente
+          </button>
+        </td>
       </tr>
     </tbody>
   </table>

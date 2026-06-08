@@ -4,12 +4,14 @@ import { from, Observable, switchMap, take } from 'rxjs';
 import { AuthService } from './auth.service';
 
 export interface ContactLead {
+  id?: string;
   uid: string;
   name: string;
   email: string;
   phone?: string;
   message: string;
   createdAt: string;
+  status?: 'pending' | 'converted';
 }
 
 @Injectable({
@@ -26,7 +28,8 @@ export class ContactService {
         const completeLead: ContactLead = {
           ...lead,
           uid: user?.uid ?? 'anonymous',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          status: 'pending'
         };
         const leadsCollection = collection(this.firestore, 'leads');
         const promise = addDoc(leadsCollection, completeLead).then(docRef => docRef.id);

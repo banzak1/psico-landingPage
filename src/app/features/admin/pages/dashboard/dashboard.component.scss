@@ -113,6 +113,26 @@ $color-danger: #b05a5a;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  .btn-convert {
+    background-color: $color-primary;
+    color: $color-white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover:not(:disabled) {
+      opacity: 0.85;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
 }
 
 /* ── Responsive ── */

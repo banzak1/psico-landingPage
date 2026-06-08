@@ -2,31 +2,40 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DashboardComponent } from './dashboard.component';
 import { AdminService } from '../../../../core/services/admin.service';
 import { ContactLead } from '../../../../core/services/contact.service';
+import { PatientService } from '../../../../core/services/patient.service';
 import { of, throwError, Observable } from 'rxjs';
 
 describe('DashboardComponent', () => {
   let fixture: ComponentFixture<DashboardComponent>;
   let component: DashboardComponent;
-  let mockAdminService: { getLeads: jest.Mock };
+  let mockAdminService: { getLeads: jest.Mock, markLeadAsConverted: jest.Mock };
+  let mockPatientService: { addPatient: jest.Mock };
 
   const mockLeads: ContactLead[] = [
     {
-      uid: 'user-1', name: 'John Doe', email: 'john@test.com',
+      id: 'lead-1', uid: 'user-1', name: 'John Doe', email: 'john@test.com',
       phone: '11987654321', message: 'Quero agendar terapia', createdAt: '2026-05-20T10:00:00Z'
     },
     {
-      uid: 'user-2', name: 'Jane Doe', email: 'jane@test.com',
+      id: 'lead-2', uid: 'user-2', name: 'Jane Doe', email: 'jane@test.com',
       message: 'Dúvida sobre valores', createdAt: '2026-05-21T14:30:00Z'
     }
   ];
 
   beforeEach(async () => {
-    mockAdminService = { getLeads: jest.fn().mockReturnValue(of(mockLeads)) };
+    mockAdminService = { 
+      getLeads: jest.fn().mockReturnValue(of(mockLeads)),
+      markLeadAsConverted: jest.fn().mockReturnValue(of(undefined))
+    };
+    mockPatientService = {
+      addPatient: jest.fn().mockReturnValue(of('new-patient-id'))
+    };
 
     await TestBed.configureTestingModule({
       imports: [DashboardComponent],
       providers: [
-        { provide: AdminService, useValue: mockAdminService }
+        { provide: AdminService, useValue: mockAdminService },
+        { provide: PatientService, useValue: mockPatientService }
       ]
     }).compileComponents();
 
@@ -93,5 +102,11 @@ describe('DashboardComponent', () => {
     const rows = compiled.querySelectorAll('tbody tr');
     // Second lead has no phone
     expect(rows[1].textContent).toContain('—');
+  });
+
+  it('should call convertLeadToPatient when button is clicked', () => {
+    component.convertLeadToPatient(mockLeads[0]);
+    expect(mockPatientService.addPatient).toHaveBeenCalled();
+    expect(mockAdminService.markLeadAsConverted).toHaveBeenCalledWith('lead-1');
   });
 });
