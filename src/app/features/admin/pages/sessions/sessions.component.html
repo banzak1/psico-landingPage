@@ -1,1 +1,129 @@
-<p>sessions works!</p>
+<header class="admin-header">
+  <div class="header-content">
+    <div>
+      <h1>📅 Agendamentos e Sessões</h1>
+      <p class="admin-subtitle">Controle de agenda, presenças e pagamentos de consultas.</p>
+    </div>
+    <button *ngIf="viewMode() === 'list'" (click)="openNewForm()" class="btn-primary">+ Agendar Sessão</button>
+  </div>
+</header>
+
+<ng-container *ngIf="viewMode() === 'list'">
+  <!-- Loading state -->
+  <div *ngIf="isLoading()" class="admin-state">
+    <div class="spinner"></div>
+    <p>Carregando sessões...</p>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!isLoading() && sessions().length === 0" class="admin-state">
+    <p>📭 Nenhuma sessão agendada ainda.</p>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!isLoading() && sessions().length > 0" class="table-wrapper">
+    <table class="leads-table">
+      <thead>
+        <tr>
+          <th>Data/Hora</th>
+          <th>Paciente</th>
+          <th>Status</th>
+          <th>Pagamento</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let session of sessions()">
+          <td>{{ session.date | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ session.patientName }}</td>
+          <td>
+            <button class="status-btn" [class.status-completed]="session.status === 'completed'"
+                    [class.status-scheduled]="session.status === 'scheduled'"
+                    [class.status-cancelled]="session.status === 'cancelled'"
+                    (click)="toggleSessionStatus(session)"
+                    [title]="'Clique para alterar status'">
+              {{ session.status === 'completed' ? 'Realizada' : (session.status === 'scheduled' ? 'Agendada' : 'Cancelada') }}
+            </button>
+          </td>
+          <td>
+            <button class="status-btn" [class.payment-paid]="session.paymentStatus === 'paid'"
+                    [class.payment-pending]="session.paymentStatus === 'pending'"
+                    (click)="togglePaymentStatus(session)"
+                    [title]="'Clique para alternar pagamento'">
+              {{ session.paymentStatus === 'paid' ? 'Pago' : 'Pendente' }}
+            </button>
+          </td>
+          <td>
+            <button (click)="openEditForm(session)" class="btn-action btn-edit">Editar</button>
+            <button (click)="deleteSession(session.id)" class="btn-action btn-delete">Excluir</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="viewMode() === 'form'">
+  <div class="form-card">
+    <h2>{{ editingSessionId() ? 'Editar Sessão' : 'Agendar Sessão' }}</h2>
+    
+    <div *ngIf="patients().length === 0" class="alert-warning">
+      Você precisa ter pacientes ativos cadastrados antes de agendar uma sessão.
+    </div>
+
+    <form *ngIf="patients().length > 0" [formGroup]="sessionForm" (ngSubmit)="saveSession()" class="patient-form">
+      
+      <div class="form-group full-width">
+        <label for="patientId">Paciente *</label>
+        <select id="patientId" formControlName="patientId">
+          <option value="" disabled>Selecione um paciente...</option>
+          <option *ngFor="let p of patients()" [value]="p.id">{{ p.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="date">Data e Hora *</label>
+        <input id="date" type="datetime-local" formControlName="date" />
+      </div>
+
+      <div class="form-group">
+        <label for="duration">Duração (minutos) *</label>
+        <input id="duration" type="number" formControlName="duration" min="1" />
+      </div>
+
+      <div class="form-group">
+        <label for="price">Valor da Sessão (R$) *</label>
+        <input id="price" type="number" formControlName="price" min="0" step="0.01" />
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status da Sessão</label>
+        <select id="status" formControlName="status">
+          <option value="scheduled">Agendada</option>
+          <option value="completed">Realizada</option>
+          <option value="cancelled">Cancelada</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="paymentStatus">Pagamento</label>
+        <select id="paymentStatus" formControlName="paymentStatus">
+          <option value="pending">Pendente</option>
+          <option value="paid">Pago</option>
+        </select>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="notes">Observações</label>
+        <textarea id="notes" formControlName="notes" rows="3" placeholder="Informações extras ou motivo de cancelamento..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancelForm()" [disabled]="isSaving()">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="sessionForm.invalid || isSaving()">
+          {{ isSaving() ? 'Salvando...' : 'Salvar Sessão' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-container>
