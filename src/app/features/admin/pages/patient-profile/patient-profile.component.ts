@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { QuillModule } from 'ngx-quill';
+import { QuillEditorComponent } from 'ngx-quill';
 
 import { PatientService, Patient } from '../../../../core/services/patient.service';
 import { SessionService, ClinicalSession } from '../../../../core/services/session.service';
@@ -12,7 +12,7 @@ import { EvolutionService, ClinicalEvolution } from '../../../../core/services/e
 @Component({
   selector: 'app-patient-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, QuillModule],
+  imports: [CommonModule, ReactiveFormsModule, QuillEditorComponent],
   templateUrl: './patient-profile.component.html',
   styleUrl: './patient-profile.component.scss'
 })
