@@ -1,0 +1,141 @@
+$color-primary: #c0624a;
+$color-bg: #fdfbf7;
+$color-border: #e8ddd4;
+$color-text: #3d3834;
+$color-text-light: #8a8178;
+$color-white: #ffffff;
+$color-danger: #b05a5a;
+
+.admin-header {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    color: $color-text;
+    margin: 0 0 0.25rem;
+  }
+
+  .admin-subtitle {
+    color: $color-text-light;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+}
+
+/* ── States ── */
+.admin-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: $color-text-light;
+  font-size: 1.05rem;
+
+  &--error {
+    color: $color-danger;
+  }
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid $color-border;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Table ── */
+.table-wrapper {
+  background: $color-white;
+  border-radius: 12px;
+  border: 1px solid $color-border;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.leads-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  min-width: 600px;
+
+  thead {
+    background-color: $color-bg;
+    border-bottom: 2px solid $color-border;
+
+    th {
+      padding: 0.75rem 0.85rem;
+      text-align: left;
+      font-weight: 600;
+      color: $color-text;
+      white-space: nowrap;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $color-border;
+      transition: background-color 0.15s;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background-color: rgba($color-primary, 0.04);
+      }
+    }
+
+    td {
+      padding: 0.6rem 0.85rem;
+      color: $color-text;
+      vertical-align: top;
+
+      a {
+        color: $color-primary;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .message-cell {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* ── Responsive ── */
+@media (min-width: 992px) {
+  .admin-header {
+    margin-bottom: 2rem;
+    h1 { font-size: 1.75rem; }
+    .admin-subtitle { font-size: 0.95rem; }
+  }
+
+  .leads-table {
+    font-size: 0.9rem;
+    
+    thead th {
+      padding: 0.85rem 1rem;
+    }
+    
+    tbody td {
+      padding: 0.75rem 1rem;
+    }
+    
+    .message-cell {
+      max-width: 280px;
+    }
+  }
+}
