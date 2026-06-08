@@ -22,6 +22,10 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: 'sessions',
         loadComponent: () => import('./pages/sessions/sessions.component').then(m => m.SessionsComponent)
+      },
+      {
+        path: 'patients/:id',
+        loadComponent: () => import('./pages/patient-profile/patient-profile.component').then(m => m.PatientProfileComponent)
       }
     ]
   }

@@ -48,6 +48,7 @@
             </span>
           </td>
           <td>
+            <a [routerLink]="['/admin/patients', patient.id]" class="btn-action btn-prontuario" title="Abrir Prontuário">Prontuário</a>
             <button (click)="openEditForm(patient)" class="btn-action btn-edit">Editar</button>
             <button (click)="deletePatient(patient.id)" class="btn-action btn-delete">Excluir</button>
           </td>

@@ -25,5 +25,11 @@ service cloud.firestore {
       allow read, write: if request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
+
+    // Evolutions: Apenas o psicólogo criador pode gerenciar a evolução
+    match /evolutions/{evolutionId} {
+      allow create: if request.auth != null && request.resource.data.psychologistId == request.auth.uid;
+      allow read, update, delete: if request.auth != null && resource.data.psychologistId == request.auth.uid;
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SessionsComponent } from './sessions.component';
-import { SessionService } from '../../../../core/services/session.service';
+import { SessionService, ClinicalSession } from '../../../../core/services/session.service';
 import { PatientService } from '../../../../core/services/patient.service';
 import { of } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
