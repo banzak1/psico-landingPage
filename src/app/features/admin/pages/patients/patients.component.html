@@ -86,6 +86,21 @@
         </select>
       </div>
 
+      <div class="form-group">
+        <label for="ageGroup">Faixa Etária *</label>
+        <select id="ageGroup" formControlName="ageGroup">
+          <option value="Criança">Criança</option>
+          <option value="Adolescente">Adolescente</option>
+          <option value="Adulto">Adulto</option>
+          <option value="Idoso">Idoso</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="clinicPercentage">Repasse para Clínica (%)</label>
+        <input id="clinicPercentage" type="number" formControlName="clinicPercentage" min="0" max="100" placeholder="Ex: 30" />
+      </div>
+
       <div class="form-group full-width">
         <label for="notes">Observações</label>
         <textarea id="notes" formControlName="notes" rows="4" placeholder="Alguma observação extra sobre este paciente?"></textarea>

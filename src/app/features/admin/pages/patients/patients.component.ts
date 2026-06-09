@@ -29,6 +29,8 @@ export class PatientsComponent implements OnInit {
     email: ['', [Validators.required, Validators.email]],
     phone: [''],
     status: ['active' as 'active' | 'inactive', Validators.required],
+    ageGroup: ['Adulto', Validators.required],
+    clinicPercentage: [0, [Validators.min(0), Validators.max(100)]],
     notes: ['']
   });
 
@@ -59,6 +61,8 @@ export class PatientsComponent implements OnInit {
       email: patient.email,
       phone: patient.phone || '',
       status: patient.status,
+      ageGroup: patient.ageGroup || 'Adulto',
+      clinicPercentage: patient.clinicPercentage || 0,
       notes: patient.notes || ''
     });
     this.editingPatientId.set(patient.id || null);
@@ -79,6 +83,8 @@ export class PatientsComponent implements OnInit {
       email: formValue.email!,
       phone: formValue.phone || '',
       status: formValue.status as 'active' | 'inactive',
+      ageGroup: formValue.ageGroup as 'Criança' | 'Adolescente' | 'Adulto' | 'Idoso',
+      clinicPercentage: formValue.clinicPercentage || 0,
       notes: formValue.notes || '',
       createdAt: new Date().toISOString()
     };
