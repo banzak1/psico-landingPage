@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, query, orderBy } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, query, orderBy, deleteField } from '@angular/fire/firestore';
 import { Observable, from } from 'rxjs';
 
 export interface ActivePackage {
@@ -47,6 +47,11 @@ export class PatientService {
   updatePatient(id: string, data: Partial<Omit<Patient, 'id'>>): Observable<void> {
     const patientDoc = doc(this.firestore, `patients/${id}`);
     return from(updateDoc(patientDoc, data));
+  }
+
+  deleteActivePackage(id: string): Observable<void> {
+    const patientDoc = doc(this.firestore, `patients/${id}`);
+    return from(updateDoc(patientDoc, { activePackage: deleteField() }));
   }
 
   deletePatient(id: string): Observable<void> {
