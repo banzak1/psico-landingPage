@@ -37,6 +37,12 @@ export class PatientProfileComponent implements OnInit {
     date: ['', Validators.required]
   });
 
+  isSellingPackage = signal(false);
+  packageForm = this.fb.group({
+    totalSessions: [4, [Validators.required, Validators.min(1)]],
+    totalValue: [400, [Validators.required, Validators.min(0)]]
+  });
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
@@ -128,5 +134,67 @@ export class PatientProfileComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/admin/patients']);
+  }
+
+  openPackageForm(): void {
+    this.isSellingPackage.set(true);
+  }
+
+  cancelPackageForm(): void {
+    this.isSellingPackage.set(false);
+  }
+
+  sellPackage(): void {
+    if (this.packageForm.invalid) return;
+    const patient = this.patient();
+    if (!patient || !patient.id) return;
+
+    const formValue = this.packageForm.value;
+    const activePackage = {
+      totalSessions: formValue.totalSessions!,
+      usedSessions: 0,
+      totalValue: formValue.totalValue!,
+      createdAt: new Date().toISOString()
+    };
+
+    this.isSaving.set(true);
+    this.patientService.updatePatient(patient.id, { activePackage }).subscribe({
+      next: () => {
+        this.isSellingPackage.set(false);
+        this.isSaving.set(false);
+        this.patient.update(p => p ? { ...p, activePackage } : p);
+      },
+      error: (err) => {
+        console.error('Falha ao vender pacote', err);
+        this.isSaving.set(false);
+      }
+    });
+  }
+
+  deletePackage(): void {
+    const patient = this.patient();
+    if (!patient || !patient.id || !patient.activePackage) return;
+    
+    if (confirm('Tem certeza que deseja cancelar e excluir o pacote ativo? Sessões já agendadas continuarão existindo, mas não estarão mais vinculadas ao pacote.')) {
+      this.isSaving.set(true);
+      
+      const updateData = { activePackage: null as unknown };
+      
+      this.patientService.updatePatient(patient.id, updateData).subscribe({
+        next: () => {
+          this.isSaving.set(false);
+          this.patient.update(p => {
+            if (!p) return p;
+            const updated = { ...p };
+            delete updated.activePackage;
+            return updated;
+          });
+        },
+        error: (err) => {
+          console.error('Falha ao excluir pacote', err);
+          this.isSaving.set(false);
+        }
+      });
+    }
   }
 }
