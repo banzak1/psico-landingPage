@@ -9,6 +9,7 @@ export interface ClinicalSession {
   date: string;
   duration: number;
   price: number;
+  isPackageSession?: boolean;
   status: 'scheduled' | 'completed' | 'cancelled';
   paymentStatus: 'pending' | 'paid';
   notes?: string;

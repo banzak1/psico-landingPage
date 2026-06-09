@@ -2,11 +2,21 @@ import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, query, orderBy } from '@angular/fire/firestore';
 import { Observable, from } from 'rxjs';
 
+export interface ActivePackage {
+  totalSessions: number;
+  usedSessions: number;
+  totalValue: number;
+  createdAt: string;
+}
+
 export interface Patient {
   id?: string;
   name: string;
   email: string;
   phone?: string;
+  ageGroup?: 'Criança' | 'Adolescente' | 'Adulto' | 'Idoso';
+  clinicPercentage?: number;
+  activePackage?: ActivePackage;
   status: 'active' | 'inactive';
   createdAt: string;
   notes?: string;
