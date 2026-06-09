@@ -178,7 +178,8 @@ export class PatientProfileComponent implements OnInit {
     if (confirm('Tem certeza que deseja cancelar e excluir o pacote ativo? Sessões já agendadas continuarão existindo, mas não estarão mais vinculadas ao pacote.')) {
       this.isSaving.set(true);
       
-      const updateData = { activePackage: null as unknown };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updateData = { activePackage: null as any };
       
       this.patientService.updatePatient(patient.id, updateData).subscribe({
         next: () => {
