@@ -81,14 +81,26 @@
         </select>
       </div>
 
-      <div class="form-group">
-        <label for="date">Data e Hora *</label>
-        <input id="date" type="datetime-local" formControlName="date" />
+      <div class="form-group" *ngIf="activePackageInfo">
+        <div class="package-alert">
+          <strong>Pacote Disponível!</strong> Este paciente tem um pacote com {{ activePackageInfo.totalSessions - activePackageInfo.usedSessions }} sessões restantes.
+        </div>
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="usePackage" />
+          Abater desta sessão (o valor da sessão será R$ 0,00 e o status ficará Pago)
+        </label>
       </div>
 
-      <div class="form-group">
-        <label for="duration">Duração (minutos) *</label>
-        <input id="duration" type="number" formControlName="duration" min="1" />
+      <div class="form-row">
+        <div class="form-group">
+          <label for="date">Data e Hora *</label>
+          <input id="date" type="datetime-local" formControlName="date" />
+        </div>
+
+        <div class="form-group">
+          <label for="duration">Duração (minutos) *</label>
+          <input id="duration" type="number" formControlName="duration" min="1" />
+        </div>
       </div>
 
       <div class="form-group">

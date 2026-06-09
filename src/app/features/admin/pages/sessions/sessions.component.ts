@@ -34,8 +34,22 @@ export class SessionsComponent implements OnInit {
     price: [150, [Validators.required, Validators.min(0)]],
     status: ['scheduled' as ClinicalSession['status'], Validators.required],
     paymentStatus: ['pending' as ClinicalSession['paymentStatus'], Validators.required],
+    usePackage: [false],
     notes: ['']
   });
+
+  get selectedPatient(): Patient | undefined {
+    const id = this.sessionForm.get('patientId')?.value;
+    return this.patients().find(p => p.id === id);
+  }
+
+  get activePackageInfo() {
+    const p = this.selectedPatient;
+    if (p?.activePackage && p.activePackage.usedSessions < p.activePackage.totalSessions) {
+      return p.activePackage;
+    }
+    return null;
+  }
 
   ngOnInit(): void {
     // Load sessions
@@ -118,8 +132,14 @@ export class SessionsComponent implements OnInit {
       price: formValue.price || 0,
       status: formValue.status as ClinicalSession['status'],
       paymentStatus: formValue.paymentStatus as ClinicalSession['paymentStatus'],
+      isPackageSession: formValue.usePackage || false,
       notes: formValue.notes || ''
     };
+
+    if (sessionData.isPackageSession) {
+      sessionData.price = 0; // Se abater do pacote, não tem preço na sessão individual
+      sessionData.paymentStatus = 'paid';
+    }
 
     const id = this.editingSessionId();
     if (id) {
@@ -136,6 +156,13 @@ export class SessionsComponent implements OnInit {
     } else {
       this.sessionService.addSession(sessionData).subscribe({
         next: () => {
+          // Atualiza o contador do pacote no paciente, se usou pacote
+          if (sessionData.isPackageSession && selectedPatient.id && selectedPatient.activePackage) {
+             const updatedPackage = { ...selectedPatient.activePackage };
+             updatedPackage.usedSessions += 1;
+             this.patientService.updatePatient(selectedPatient.id, { activePackage: updatedPackage }).subscribe();
+          }
+
           this.isSaving.set(false);
           this.viewMode.set('list');
         },
