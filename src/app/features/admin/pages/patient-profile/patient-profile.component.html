@@ -1,0 +1,141 @@
+<header class="admin-header">
+  <div class="header-content">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">← Voltar</button>
+      <div>
+        <h1>{{ patient()?.name || 'Carregando...' }}</h1>
+        <p class="admin-subtitle">Prontuário Eletrônico e Histórico Clínico</p>
+      </div>
+    </div>
+    
+    <div class="status-badge" *ngIf="patient()" [class.active]="patient()?.status === 'active'">
+      {{ patient()?.status === 'active' ? 'Ativo' : 'Inativo' }}
+    </div>
+  </div>
+</header>
+
+<ng-container *ngIf="isLoading()">
+  <div class="admin-state">
+    <div class="spinner"></div>
+    <p>Carregando perfil e prontuário...</p>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="!isLoading() && patient()">
+  <div class="profile-layout">
+    
+    <!-- Sidebar: Patient Info & Sessions -->
+    <aside class="profile-sidebar">
+      <!-- Info Card -->
+      <div class="card info-card">
+        <h3>Informações Pessoais</h3>
+        <p><strong>Email:</strong> {{ patient()?.email }}</p>
+        <p><strong>Telefone:</strong> {{ patient()?.phone || 'Não informado' }}</p>
+        <p><strong>Faixa Etária:</strong> {{ patient()?.ageGroup || 'Não informada' }}</p>
+        <p *ngIf="patient()?.clinicPercentage"><strong>Repasse Clínica:</strong> {{ patient()?.clinicPercentage }}%</p>
+        <p><strong>Cadastrado em:</strong> {{ patient()?.createdAt | date:'dd/MM/yyyy' }}</p>
+        <div *ngIf="patient()?.notes" class="patient-notes">
+          <strong>Observações Iniciais:</strong>
+          <p>{{ patient()?.notes }}</p>
+        </div>
+      </div>
+
+      <!-- Package Card -->
+      <div class="card package-card" *ngIf="patient()">
+        <h3>Pacote de Sessões</h3>
+        
+        <div *ngIf="patient()?.activePackage as pkg" class="active-package-info">
+          <div class="package-progress">
+            <div class="progress-text"><strong>{{ pkg.usedSessions }}</strong> de <strong>{{ pkg.totalSessions }}</strong> sessões utilizadas</div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" [style.width.%]="(pkg.usedSessions / pkg.totalSessions) * 100"></div>
+            </div>
+          </div>
+          <p class="package-meta">Vendido em {{ pkg.createdAt | date:'dd/MM/yyyy' }} por {{ pkg.totalValue | currency:'BRL' }}</p>
+          <button class="btn-outline btn-sm" style="color: #ef4444; border-color: #ef4444; margin-top: 0.5rem;" (click)="deletePackage()">Cancelar / Excluir Pacote</button>
+        </div>
+
+        <div *ngIf="!patient()?.activePackage && !isSellingPackage()" class="no-package">
+          <p class="text-muted">Nenhum pacote ativo.</p>
+          <button class="btn-outline btn-sm" (click)="openPackageForm()">+ Vender Pacote</button>
+        </div>
+
+        <form *ngIf="isSellingPackage()" [formGroup]="packageForm" (ngSubmit)="sellPackage()" class="package-form mt-3">
+          <div class="form-group">
+            <label for="totalSessions">Nº de Sessões</label>
+            <input id="totalSessions" type="number" formControlName="totalSessions" min="1">
+          </div>
+          <div class="form-group">
+            <label for="totalValue">Valor Total (R$)</label>
+            <input id="totalValue" type="number" formControlName="totalValue" min="0">
+          </div>
+          <div class="form-actions" style="margin-top: 1rem;">
+            <button type="button" class="btn-secondary btn-sm" (click)="cancelPackageForm()" [disabled]="isSaving()">Cancelar</button>
+            <button type="submit" class="btn-primary btn-sm" [disabled]="packageForm.invalid || isSaving()">Salvar</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Sessions History -->
+      <div class="card sessions-card">
+        <h3>Histórico de Sessões</h3>
+        <p *ngIf="sessions().length === 0" class="text-muted">Nenhuma sessão registrada.</p>
+        <ul class="session-list" *ngIf="sessions().length > 0">
+          <li *ngFor="let s of sessions()" class="session-item">
+            <span class="session-date">{{ s.date | date:'dd/MM/yyyy HH:mm' }}</span>
+            <span class="session-status" [class.done]="s.status === 'completed'">
+              {{ s.status === 'completed' ? 'Realizada' : (s.status === 'scheduled' ? 'Agendada' : 'Cancelada') }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content: Evolutions -->
+    <main class="profile-main">
+      <div class="card evolution-composer">
+        <h3>Registrar Evolução</h3>
+        <form [formGroup]="evolutionForm" (ngSubmit)="saveEvolution()">
+          <div class="form-group">
+            <label for="date">Data da Sessão/Registro</label>
+            <input type="datetime-local" id="date" formControlName="date">
+          </div>
+          
+          <div class="form-group">
+            <label for="quill-content">Anotações Clínicas</label>
+            <div class="quill-wrapper">
+              <quill-editor id="quill-content" formControlName="content" 
+                            [modules]="{ toolbar: [ ['bold', 'italic', 'underline'], [{'list': 'ordered'}, {'list': 'bullet'}] ] }"
+                            placeholder="Escreva a evolução do paciente aqui..."></quill-editor>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="evolutionForm.invalid || isSaving()">
+              {{ isSaving() ? 'Salvando...' : 'Salvar Evolução' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="timeline-container">
+        <h3>Linha do Tempo</h3>
+        <p *ngIf="evolutions().length === 0" class="text-muted">Nenhuma evolução registrada para este paciente ainda.</p>
+        
+        <div class="timeline">
+          <div class="timeline-item" *ngFor="let ev of evolutions()">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content card">
+              <div class="timeline-header">
+                <strong>{{ ev.date | date:'dd/MM/yyyy' }}</strong>
+                <span class="time">{{ ev.date | date:'HH:mm' }}</span>
+              </div>
+              <div class="timeline-body ql-editor" [innerHTML]="ev.content"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</ng-container>

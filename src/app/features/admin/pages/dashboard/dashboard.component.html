@@ -1,0 +1,133 @@
+<header class="admin-header">
+  <div class="header-content">
+    <div>
+      <h1>Painel Geral</h1>
+      <p class="admin-subtitle">Bem-vinda de volta! Aqui está o resumo do seu consultório hoje.</p>
+    </div>
+  </div>
+</header>
+
+<!-- KPIs Section -->
+<section class="kpi-grid">
+  <!-- Card 1: Hoje -->
+  <div class="kpi-card">
+    <div class="kpi-icon icon-primary">📅</div>
+    <div class="kpi-content">
+      <span class="kpi-label">Sessões Hoje</span>
+      <strong class="kpi-value">{{ todaySessions().length }}</strong>
+    </div>
+  </div>
+  
+  <!-- Card 2: Pacientes -->
+  <div class="kpi-card">
+    <div class="kpi-icon icon-secondary">👥</div>
+    <div class="kpi-content">
+      <span class="kpi-label">Pacientes Ativos</span>
+      <strong class="kpi-value">{{ activePatientsCount() }}</strong>
+    </div>
+  </div>
+
+  <!-- Card 3: Receita Mes -->
+  <div class="kpi-card">
+    <div class="kpi-icon icon-success">💰</div>
+    <div class="kpi-content">
+      <span class="kpi-label">Faturamento Bruto</span>
+      <strong class="kpi-value">{{ monthlyRevenue() | currency:'BRL' }}</strong>
+    </div>
+  </div>
+
+  <!-- Card 4: Faturamento Liquido -->
+  <div class="kpi-card">
+    <div class="kpi-icon icon-success" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">💎</div>
+    <div class="kpi-content">
+      <span class="kpi-label">Líquido (S/ Clínica)</span>
+      <strong class="kpi-value">{{ netRevenue() | currency:'BRL' }}</strong>
+    </div>
+  </div>
+
+  <!-- Card 4: A Receber -->
+  <div class="kpi-card">
+    <div class="kpi-icon icon-warning">⏳</div>
+    <div class="kpi-content">
+      <span class="kpi-label">A Receber</span>
+      <strong class="kpi-value">{{ pendingReceivables() | currency:'BRL' }}</strong>
+    </div>
+  </div>
+</section>
+
+<div class="dashboard-layout">
+  <!-- Main Column: Today's agenda & Leads -->
+  <main class="dashboard-main">
+    
+    <!-- Agenda de Hoje -->
+    <div class="card">
+      <h3>Sessões de Hoje</h3>
+      <div *ngIf="todaySessions().length === 0" class="empty-state">
+        <p>✨ Nenhuma sessão agendada para hoje.</p>
+      </div>
+
+      <ul class="today-list" *ngIf="todaySessions().length > 0">
+        <li *ngFor="let s of todaySessions()" class="today-item">
+          <div class="time">{{ s.date | date:'HH:mm' }}</div>
+          <div class="details">
+            <!-- Em um cenário real, você faria o JOIN ou buscaria o nome do paciente. Por enquanto, usamos patientId ou um placeholder -->
+            <strong>Sessão agendada</strong>
+            <span class="badge" [ngClass]="s.status">{{ s.status === 'scheduled' ? 'Agendada' : (s.status === 'completed' ? 'Realizada' : 'Cancelada') }}</span>
+          </div>
+          <div class="actions">
+            <!-- Botão pro prontuário se possível, ou apenas visual -->
+            <a [routerLink]="['/admin/patients', s.patientId]" class="btn-link">Ver Prontuário</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Contatos do Site -->
+    <div class="card leads-card">
+      <h3>Novos Contatos do Site</h3>
+      
+      <div *ngIf="isLoading()" class="admin-state">
+        <div class="spinner"></div>
+        <p>Carregando...</p>
+      </div>
+
+      <div *ngIf="hasError()" class="admin-state error-state">
+        <p>⚠️ Falha ao carregar os dados. Tente novamente mais tarde.</p>
+      </div>
+
+      <div *ngIf="!isLoading() && !hasError() && leads().length === 0" class="admin-state empty-state">
+        <p>📭 Nenhum contato novo no momento.</p>
+      </div>
+
+      <div *ngIf="!isLoading() && !hasError() && leads().length > 0" class="table-wrapper">
+        <table class="leads-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Contato</th>
+              <th>Mensagem</th>
+              <th>Data</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let lead of leads()">
+              <td>{{ lead.name }}</td>
+              <td>
+                <div class="contact-info">
+                  <a href="mailto:{{ lead.email }}">{{ lead.email }}</a>
+                  <a *ngIf="lead.phone" href="https://wa.me/55{{ lead.phone }}" target="_blank">{{ lead.phone }}</a>
+                </div>
+              </td>
+              <td><p class="truncate">{{ lead.message }}</p></td>
+              <td>{{ lead.createdAt | date:'dd/MM HH:mm' }}</td>
+              <td>
+                <button (click)="convertLeadToPatient(lead)" class="btn-action btn-convert">Tornar Paciente</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>

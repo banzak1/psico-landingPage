@@ -1,0 +1,117 @@
+<header class="admin-header">
+  <div class="header-content">
+    <div>
+      <h1>👤 Pacientes</h1>
+      <p class="admin-subtitle">Gerencie seus pacientes oficiais da clínica.</p>
+    </div>
+    <button *ngIf="viewMode() === 'list'" (click)="openNewForm()" class="btn-primary">+ Novo Paciente</button>
+  </div>
+</header>
+
+<ng-container *ngIf="viewMode() === 'list'">
+  <!-- Loading state -->
+  <div *ngIf="isLoading()" class="admin-state">
+    <div class="spinner"></div>
+    <p>Carregando pacientes...</p>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!isLoading() && patients().length === 0" class="admin-state">
+    <p>📭 Nenhum paciente cadastrado ainda.</p>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!isLoading() && patients().length > 0" class="table-wrapper">
+    <table class="leads-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Telefone</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let patient of patients()">
+          <td>{{ patient.name }}</td>
+          <td>{{ patient.email }}</td>
+          <td>
+            <a *ngIf="patient.phone" href="https://wa.me/55{{ patient.phone }}" target="_blank">
+              {{ patient.phone }}
+            </a>
+            <span *ngIf="!patient.phone">—</span>
+          </td>
+          <td>
+            <span class="status-badge" [class.status-active]="patient.status === 'active'" [class.status-inactive]="patient.status === 'inactive'">
+              {{ patient.status === 'active' ? 'Ativo' : 'Inativo' }}
+            </span>
+          </td>
+          <td>
+            <a [routerLink]="['/admin/patients', patient.id]" class="btn-action btn-prontuario" title="Abrir Prontuário">Prontuário</a>
+            <button (click)="openEditForm(patient)" class="btn-action btn-edit">Editar</button>
+            <button (click)="deletePatient(patient.id)" class="btn-action btn-delete">Excluir</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="viewMode() === 'form'">
+  <div class="form-card">
+    <h2>{{ editingPatientId() ? 'Editar Paciente' : 'Novo Paciente' }}</h2>
+    <form [formGroup]="patientForm" (ngSubmit)="savePatient()" class="patient-form">
+      
+      <div class="form-group">
+        <label for="name">Nome Completo *</label>
+        <input id="name" type="text" formControlName="name" placeholder="Ex: Maria Silva" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-mail *</label>
+        <input id="email" type="email" formControlName="email" placeholder="Ex: maria@email.com" />
+      </div>
+
+      <div class="form-group">
+        <label for="phone">WhatsApp (Apenas números)</label>
+        <input id="phone" type="tel" formControlName="phone" placeholder="Ex: 11999999999" />
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" formControlName="status">
+          <option value="active">Ativo</option>
+          <option value="inactive">Inativo</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="ageGroup">Faixa Etária *</label>
+        <select id="ageGroup" formControlName="ageGroup">
+          <option value="Criança">Criança</option>
+          <option value="Adolescente">Adolescente</option>
+          <option value="Adulto">Adulto</option>
+          <option value="Idoso">Idoso</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="clinicPercentage">Repasse para Clínica (%)</label>
+        <input id="clinicPercentage" type="number" formControlName="clinicPercentage" min="0" max="100" placeholder="Ex: 30" />
+      </div>
+
+      <div class="form-group full-width">
+        <label for="notes">Observações</label>
+        <textarea id="notes" formControlName="notes" rows="4" placeholder="Alguma observação extra sobre este paciente?"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancelForm()" [disabled]="isSaving()">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="patientForm.invalid || isSaving()">
+          {{ isSaving() ? 'Salvando...' : 'Salvar Paciente' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-container>

@@ -11,10 +11,14 @@
             "id": "176bc32feb851a08",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Visualização em gráfico"
+              "type": "markdown",
+              "state": {
+                "file": "Visão Geral do Projeto.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Visão Geral do Projeto"
             }
           }
         ]
@@ -181,29 +185,31 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "176bc32feb851a08",
+  "active": "8c142ba59dd6e14a",
   "lastOpenFiles": [
-    "epics/epic-02-mobile-first-refactoring.md",
-    "content/linkedin-post-landing-page.md",
-    "epics/epic-01-dashboard-admin.md",
-    "content",
-    "epics",
+    "Sem título 1",
+    "Sem título",
+    "AppComponent.md",
     "Arquitetura - Autenticação e Firebase.md",
-    "Correções - Login Google Auth.md",
-    "Auditoria - Login Google Auth.md",
-    "Visão Geral do Projeto.md",
     "ServicesComponent.md",
     "FooterComponent.md",
+    "Correções - Login Google Auth.md",
+    "Core.md",
+    "content/linkedin-post-landing-page.md",
+    "HeaderComponent.md",
+    "Visão Geral do Projeto.md",
+    "HeroComponent.md",
+    "FaqComponent.md",
+    "epics/epic-02-mobile-first-refactoring.md",
+    "epics/epic-01-dashboard-admin.md",
     "HowItWorksComponent.md",
     "Diretrizes de Código.md",
     "Regras de Desenvolvimento.md",
-    "FaqComponent.md",
-    "AppComponent.md",
     "Features.md",
-    "Core.md",
+    "Auditoria - Login Google Auth.md",
     "AboutComponent.md",
-    "HeroComponent.md",
-    "HeaderComponent.md",
+    "content",
+    "epics",
     "Sem título.base",
     "Sem título.canvas",
     "2026-03-22.md",

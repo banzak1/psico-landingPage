@@ -7,11 +7,29 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Leads: qualquer pessoa logada pode criar; apenas admin pode ler todos
+    // Leads: qualquer pessoa logada (no site) pode criar; apenas admin pode ler/atualizar
     match /leads/{leadId} {
       allow create: if request.auth != null;
-      allow read: if request.auth != null
+      allow read, update: if request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Patients: Apenas administradores podem gerenciar
+    match /patients/{patientId} {
+      allow read, write: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Sessions: Apenas administradores podem gerenciar
+    match /sessions/{sessionId} {
+      allow read, write: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Evolutions: Apenas o psicólogo criador pode gerenciar a evolução
+    match /evolutions/{evolutionId} {
+      allow create: if request.auth != null && request.resource.data.psychologistId == request.auth.uid;
+      allow read, update, delete: if request.auth != null && resource.data.psychologistId == request.auth.uid;
     }
   }
 }

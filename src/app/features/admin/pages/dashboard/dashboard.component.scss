@@ -1,0 +1,184 @@
+$color-primary: #c0624a;
+$color-bg: #fdfbf7;
+$color-border: #e8ddd4;
+$color-text: #3d3834;
+$color-text-light: #8a8178;
+$color-white: #ffffff;
+$color-success: #4a8c6a;
+$color-warning: #e09e36;
+$color-secondary: #eab9aa;
+
+.admin-header {
+  margin-bottom: 2rem;
+  
+  h1 { font-family: var(--font-serif); font-size: 1.8rem; color: $color-text; margin: 0 0 0.5rem 0; }
+  .admin-subtitle { color: $color-text-light; font-size: 0.95rem; margin: 0; }
+}
+
+/* KPIs */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.kpi-card {
+  background: $color-white;
+  border-radius: 12px;
+  border: 1px solid $color-border;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(61, 56, 52, 0.08);
+  }
+
+  .kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    
+    &.icon-primary { background: rgba($color-primary, 0.1); color: $color-primary; }
+    &.icon-secondary { background: rgba($color-secondary, 0.3); color: $color-primary; }
+    &.icon-success { background: rgba($color-success, 0.1); color: $color-success; }
+    &.icon-warning { background: rgba($color-warning, 0.1); color: $color-warning; }
+  }
+
+  .kpi-content {
+    display: flex;
+    flex-direction: column;
+
+    .kpi-label { font-size: 0.85rem; color: $color-text-light; font-weight: 500; margin-bottom: 0.2rem; }
+    .kpi-value { font-size: 1.4rem; color: $color-text; font-weight: 700; }
+  }
+}
+
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.card {
+  background: $color-white;
+  border-radius: 12px;
+  border: 1px solid $color-border;
+  padding: 1.5rem;
+
+  h3 { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.2rem; color: $color-text; }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: $color-text-light;
+  font-size: 0.95rem;
+}
+
+/* Today's Agenda */
+.today-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  .today-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid $color-border;
+
+    &:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .time {
+      font-weight: 600;
+      color: $color-primary;
+      font-size: 1.1rem;
+      min-width: 60px;
+    }
+
+    .details {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0 1rem;
+
+      strong { color: $color-text; font-weight: 500; }
+      
+      .badge {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-weight: 600;
+        
+        &.scheduled { background: rgba($color-warning, 0.15); color: $color-warning; }
+        &.completed { background: rgba($color-success, 0.15); color: $color-success; }
+        &.cancelled { background: rgba($color-text-light, 0.15); color: $color-text-light; }
+      }
+    }
+
+    .actions {
+      .btn-link {
+        color: $color-primary;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        &:hover { text-decoration: underline; }
+      }
+    }
+  }
+}
+
+/* Leads (Tabela antiga) */
+.table-wrapper { overflow-x: auto; }
+.leads-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  th, td { padding: 1rem; text-align: left; border-bottom: 1px solid $color-border; }
+  th { font-weight: 600; color: $color-text-light; background-color: rgba($color-bg, 0.5); }
+  td { color: $color-text; }
+
+  .contact-info { display: flex; flex-direction: column; gap: 0.2rem; a { color: $color-primary; text-decoration: none; &:hover { text-decoration: underline; } } }
+  .truncate { max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; color: $color-text-light; }
+}
+
+.btn-action {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+  
+  &.btn-convert { background-color: $color-success; color: white; &:hover { opacity: 0.9; } }
+}
+
+/* Loading */
+.admin-state {
+  text-align: center;
+  padding: 3rem;
+  color: $color-text-light;
+  
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid $color-border;
+    border-top-color: $color-primary;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
